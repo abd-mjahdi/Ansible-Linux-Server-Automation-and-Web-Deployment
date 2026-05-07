@@ -107,13 +107,8 @@ The lab consists of three virtual machines connected through an internal network
 | VM Name         | Hostname         | Role             | RAM   | Disk  | Internal IP   |
 |----------------|-----------------|------------------|-------|-------|---------------|
 | control-node    | control-node     | Ansible Control  | 2 GB  | 20 GB | 192.168.56.10 |
-<<<<<<< HEAD
-| managed-node1  | managed-node1   | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
-| managed-node2  | managed-node2   | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
-=======
-| managed-node1  | managed-node-1   | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
-| managed-node2  | managed-node-2   | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
->>>>>>> 45b6697 (Set up and document network configuration)
+| managed-node1   | managed-node1    | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
+| managed-node2   | managed-node2    | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
 
 All three machines share the same OS user credentials for simplicity in the lab environment:
 
@@ -142,7 +137,7 @@ To configure Adapter 2: navigate to VM Settings, then Network, then Adapter 2, c
 
 ### 1.2 Installing Ubuntu Server
 
-Ubuntu Server 24.04 LTS was installed on each VM using the same ISO image. During installation, the following options were selected:
+Ubuntu Server 26.04 LTS was installed on each VM using the same ISO image. During installation, the following options were selected:
 
 The language was set to English. A standard Ubuntu Server installation was chosen (not minimized). The default partitioning was accepted. The username was set to ansible with a consistent password across all machines. OpenSSH Server was selected during the package selection step to enable SSH access immediately after installation.
 
