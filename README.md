@@ -61,6 +61,9 @@ ansible-project/
                 netplan_control_node.png
                 ping_test_results.png
             phase3_ssh_ansible/
+                key_generation.png
+                ssh_key_distribution_to_node1.png
+                ssh_key_distribution_to_node2.png
             phase4_playbooks/
             phase5_roles/
         report/
