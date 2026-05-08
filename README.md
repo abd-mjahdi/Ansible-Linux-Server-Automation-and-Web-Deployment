@@ -14,6 +14,7 @@
 4. [Infrastructure Architecture](#infrastructure-architecture)
 5. [Phase 1 — Virtual Machine Setup](#phase-1--virtual-machine-setup)
 6. [Phase 2 — Network Configuration](#phase-2--network-configuration)
+7. [Phase 3 — SSH Configuration for Ansible](#phase-3--ssh-configuration-for-ansible)
 
 ---
 
@@ -107,8 +108,8 @@ The lab consists of three virtual machines connected through an internal network
 | VM Name         | Hostname         | Role             | RAM   | Disk  | Internal IP   |
 |----------------|-----------------|------------------|-------|-------|---------------|
 | control-node    | control-node     | Ansible Control  | 2 GB  | 20 GB | 192.168.56.10 |
-| managed-node-1   | managed-node-1    | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
-| managed-node-2   | managed-node-2    | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
+| managed-node-1  | managed-node-1   | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
+| managed-node-2  | managed-node-2   | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
 
 All three machines share the same OS user credentials for simplicity in the lab environment:
 
@@ -227,5 +228,81 @@ ping 192.168.56.12
 Both ping tests returned successful responses, confirming that the internal network is fully operational and ready for Ansible communication.
 
 ---
+
+## Phase 3 — SSH Configuration for Ansible
+
+Ansible connects to managed nodes over SSH. To avoid typing the password on every run, SSH key authentication was configured from the control node to each managed node.
+
+### 3.1 Generate an SSH key pair (control node)
+
+On `control-node`, generate an Ed25519 key (recommended):
+
+```bash
+ssh-keygen -t ed25519
+```
+
+If prompted, press Enter to accept the default path (`/home/ansible/.ssh/id_ed25519`). In this lab setup, the key was generated with an empty passphrase.
+
+Screenshot:
+
+- `docs/screenshots/phase3_ssh_ansible/key_generation.png`
+
+### 3.2 Copy the public key to managed nodes
+
+Install the public key on each target machine (first time you will be prompted for the user's password):
+
+```bash
+ssh-copy-id ansible@192.168.56.11
+ssh-copy-id ansible@192.168.56.12
+```
+
+Screenshots:
+
+- `docs/screenshots/phase3_ssh_ansible/ssh_key_distribution_to_node1.png`
+- `docs/screenshots/phase3_ssh_ansible/ssh_key_distribution_to_node2.png`
+
+### 3.3 (Optional) Simplify SSH with `~/.ssh/config`
+
+To avoid typing IP addresses, create or edit:
+
+```bash
+nano ~/.ssh/config
+```
+
+Example config:
+
+```sshconfig
+Host node1
+  HostName 192.168.56.11
+  User ansible
+  IdentityFile ~/.ssh/id_ed25519
+
+Host node2
+  HostName 192.168.56.12
+  User ansible
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+Then fix permissions:
+
+```bash
+chmod 600 ~/.ssh/config
+```
+
+### 3.4 Verification
+
+From `control-node`, verify passwordless login:
+
+```bash
+ssh ansible@192.168.56.11
+ssh ansible@192.168.56.12
+```
+
+Or, if you used `~/.ssh/config`:
+
+```bash
+ssh node1
+ssh node2
+```
 
 *Documentation will continue as the project progresses through the remaining phases.*
