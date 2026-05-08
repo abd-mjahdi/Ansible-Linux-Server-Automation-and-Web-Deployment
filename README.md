@@ -107,8 +107,8 @@ The lab consists of three virtual machines connected through an internal network
 | VM Name         | Hostname         | Role             | RAM   | Disk  | Internal IP   |
 |----------------|-----------------|------------------|-------|-------|---------------|
 | control-node    | control-node     | Ansible Control  | 2 GB  | 20 GB | 192.168.56.10 |
-| managed-node1   | managed-node1    | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
-| managed-node2   | managed-node2    | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
+| managed-node-1   | managed-node-1    | Managed Target   | 2 GB  | 15 GB | 192.168.56.11 |
+| managed-node-2   | managed-node-2    | Managed Target   | 2 GB  | 15 GB | 192.168.56.12 |
 
 All three machines share the same OS user credentials for simplicity in the lab environment:
 
