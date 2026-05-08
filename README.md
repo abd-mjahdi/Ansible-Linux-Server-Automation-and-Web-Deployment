@@ -15,6 +15,7 @@
 5. [Phase 1 — Virtual Machine Setup](#phase-1--virtual-machine-setup)
 6. [Phase 2 — Network Configuration](#phase-2--network-configuration)
 7. [Phase 3 — SSH Configuration for Ansible](#phase-3--ssh-configuration-for-ansible)
+8. [Phase 4 — Ansible Playbooks](#phase-4--ansible-playbooks)
 
 ---
 
@@ -67,6 +68,14 @@ ansible-project/
                 inventory_config.png
                 ansible_ping_test.png
             phase4_playbooks/
+                apache_playbook.png
+                apache_playbook_run.png
+                apache_status_check.png
+                nginx_playbook.png
+                nginx_playbook_run.png
+                nginx_status_check.png
+                create_users_playbook.png
+                create_users_playbook_run.png
             phase5_roles/
         report/
             project_report.docx
@@ -337,5 +346,97 @@ ansible -i inventory.ini managed_nodes -m ping
 Screenshot:
 
 - `docs/screenshots/phase3_ssh_ansible/ansible_ping_test.png`
+
+---
+
+## Phase 4 — Ansible Playbooks
+
+In this phase, Ansible playbooks were created and executed from the control node to automate package installation, service management, and user creation on the managed nodes.
+
+### 4.1 Privilege escalation (sudo) configuration
+
+Since package installation and service management require root privileges, playbooks use `become: true`. To avoid interactive sudo prompts during automation, the `ansible` user was granted passwordless sudo on the managed nodes:
+
+```bash
+sudo usermod -aG sudo ansible
+echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+sudo chmod 440 /etc/sudoers.d/ansible
+```
+
+### 4.2 Apache installation playbook (node1)
+
+Playbook: `playbooks/install_apache.yml`
+
+Run:
+
+```bash
+ansible-playbook -i inventory.ini playbooks/install_apache.yml
+```
+
+Screenshots:
+
+- `docs/screenshots/phase4_playbooks/apache_playbook.png`
+- `docs/screenshots/phase4_playbooks/apache_playbook_run.png`
+
+Status verification (on managed-node-1):
+
+```bash
+systemctl status apache2
+```
+
+Screenshot:
+
+- `docs/screenshots/phase4_playbooks/apache_status_check.png`
+
+### 4.3 Nginx installation playbook (node2)
+
+Playbook: `playbooks/install_nginx.yml`
+
+Run:
+
+```bash
+ansible-playbook -i inventory.ini playbooks/install_nginx.yml
+```
+
+Screenshots:
+
+- `docs/screenshots/phase4_playbooks/nginx_playbook.png`
+- `docs/screenshots/phase4_playbooks/nginx_playbook_run.png`
+
+Status verification (on managed-node-2):
+
+```bash
+systemctl status nginx
+```
+
+Screenshot:
+
+- `docs/screenshots/phase4_playbooks/nginx_status_check.png`
+
+### 4.4 User creation playbook (all managed nodes)
+
+Playbook: `playbooks/create_users.yml`
+
+This playbook creates the lab users `devuser` and `opsuser` on both managed nodes.
+
+Run:
+
+```bash
+ansible-playbook -i inventory.ini playbooks/create_users.yml
+```
+
+Screenshots:
+
+- `docs/screenshots/phase4_playbooks/create_users_playbook.png`
+- `docs/screenshots/phase4_playbooks/create_users_playbook_run.png`
+
+Optional verification (on a managed node):
+
+```bash
+getent passwd devuser
+getent passwd opsuser
+```
+
+---
 
 *Documentation will continue as the project progresses through the remaining phases.*
