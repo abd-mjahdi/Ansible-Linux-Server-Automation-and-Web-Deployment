@@ -64,6 +64,8 @@ ansible-project/
                 key_generation.png
                 ssh_key_distribution_to_node1.png
                 ssh_key_distribution_to_node2.png
+                inventory_config.png
+                ansible_ping_test.png
             phase4_playbooks/
             phase5_roles/
         report/
@@ -307,5 +309,33 @@ Or, if you used `~/.ssh/config`:
 ssh node1
 ssh node2
 ```
+
+### 3.5 Inventory configuration
+
+After SSH was configured, the Ansible inventory was set to describe the managed nodes.
+
+Example `inventory.ini`:
+
+```ini
+[managed_nodes]
+node1 ansible_host=192.168.56.11 ansible_user=ansible
+node2 ansible_host=192.168.56.12 ansible_user=ansible
+```
+
+Screenshot:
+
+- `docs/screenshots/phase3_ssh_ansible/inventory_config.png`
+
+### 3.6 Ansible connectivity test (ping)
+
+To confirm Ansible can reach the managed nodes using SSH, run:
+
+```bash
+ansible -i inventory.ini managed_nodes -m ping
+```
+
+Screenshot:
+
+- `docs/screenshots/phase3_ssh_ansible/ansible_ping_test.png`
 
 *Documentation will continue as the project progresses through the remaining phases.*
