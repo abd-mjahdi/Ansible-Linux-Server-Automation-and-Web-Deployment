@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      - DB_HOST={{ hostvars[groups['db'][0]].ansible_host }}
+      - DB_PORT={{ db_port }}
+      - DB_NAME={{ db_name }}
+      - DB_USER={{ db_user }}
+      - DB_PASSWORD={{ db_password }}
+
+  proxy:
+    image: nginx:1.25-alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+

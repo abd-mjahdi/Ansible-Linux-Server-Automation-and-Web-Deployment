@@ -1,0 +1,25 @@
+---
+- name: Cleanup Phase 4 services (avoid port conflicts)
+  hosts: managed_nodes
+  become: true
+  roles:
+    - cleanup
+
+- name: Install Docker on all nodes
+  hosts: managed_nodes
+  become: true
+  roles:
+    - common
+
+- name: Deploy MariaDB on database server
+  hosts: db
+  become: true
+  roles:
+    - database
+
+- name: Deploy Nginx + Flask app on app server
+  hosts: app
+  become: true
+  roles:
+    - webserver
+

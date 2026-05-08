@@ -1,0 +1,50 @@
+import os
+from flask import Flask
+import mysql.connector
+
+
+class DBManager:
+    def __init__(self):
+        self.connection = mysql.connector.connect(
+            user=os.environ.get("DB_USER", "root"),
+            password=os.environ.get("DB_PASSWORD", "changeme123"),
+            host=os.environ.get("DB_HOST", "192.168.56.12"),
+            port=int(os.environ.get("DB_PORT", "3306")),
+            database=os.environ.get("DB_NAME", "example"),
+            auth_plugin="mysql_native_password",
+        )
+        self.cursor = self.connection.cursor()
+
+    def populate_db(self):
+        self.cursor.execute("DROP TABLE IF EXISTS blog")
+        self.cursor.execute(
+            "CREATE TABLE blog (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255))"
+        )
+        self.cursor.executemany(
+            "INSERT INTO blog (id, title) VALUES (%s, %s);",
+            [(i, "Blog post #%d" % i) for i in range(1, 5)],
+        )
+        self.connection.commit()
+
+    def query_titles(self):
+        self.cursor.execute("SELECT title FROM blog")
+        return [row[0] for row in self.cursor]
+
+
+server = Flask(__name__)
+conn = None
+
+
+@server.route("/")
+def list_blog():
+    global conn
+    if not conn:
+        conn = DBManager()
+        conn.populate_db()
+    rec = conn.query_titles()
+    return "<br>".join("Hello " + title for title in rec)
+
+
+if __name__ == "__main__":
+    server.run()
+

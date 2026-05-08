@@ -1,0 +1,58 @@
+---
+- name: Create app directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: "0755"
+  loop:
+    - /home/ansible/flask-app
+    - /home/ansible/flask-app/backend
+    - /home/ansible/flask-app/proxy
+
+- name: Deploy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /home/ansible/flask-app/docker-compose.yml
+    owner: ansible
+    group: ansible
+    mode: "0644"
+
+- name: Deploy Flask app
+  template:
+    src: hello.py.j2
+    dest: /home/ansible/flask-app/backend/hello.py
+    owner: ansible
+    group: ansible
+    mode: "0644"
+
+- name: Deploy backend requirements.txt
+  template:
+    src: requirements.txt.j2
+    dest: /home/ansible/flask-app/backend/requirements.txt
+    owner: ansible
+    group: ansible
+    mode: "0644"
+
+- name: Deploy backend Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: /home/ansible/flask-app/backend/Dockerfile
+    owner: ansible
+    group: ansible
+    mode: "0644"
+
+- name: Deploy Nginx config
+  template:
+    src: nginx.conf.j2
+    dest: /home/ansible/flask-app/proxy/nginx.conf
+    owner: ansible
+    group: ansible
+    mode: "0644"
+
+- name: Build and start app stack
+  shell: docker compose up -d --build
+  args:
+    chdir: /home/ansible/flask-app
+
